@@ -26,7 +26,7 @@ class CustomMenusCard extends StatelessWidget {
                 child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     child: Container(
-                      height: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.width / 3,
                       width: MediaQuery.of(context).size.width / 2,
                       decoration: BoxDecoration(image: DecorationImage(
                         image: AssetImage(image),
@@ -37,7 +37,7 @@ class CustomMenusCard extends StatelessWidget {
 
               ///Stack 2
               Container(
-                height: MediaQuery.of(context).size.width / 2,
+                height: MediaQuery.of(context).size.width / 3,
                 width: MediaQuery.of(context).size.width / 2,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
