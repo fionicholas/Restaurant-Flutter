@@ -12,4 +12,6 @@ abstract class RestaurantRepository {
   Future<List<RestaurantItem>> getRestaurantData();
 
   Future<DetailRestaurantItem> getDetailRestaurant(String id);
+
+  Future<List<RestaurantItem>> searchRestaurants(String query);
 }

@@ -32,4 +32,11 @@ class RestaurantDataSource extends RestaurantRepository {
         .getRestaurantData()
         .then((value) => value.restaurants);
   }
+
+  @override
+  Future<List<RestaurantItem>> searchRestaurants(String query) {
+    return _restaurantApi
+        .searchRestaurants(query)
+        .then((value) => value.restaurants);
+  }
 }

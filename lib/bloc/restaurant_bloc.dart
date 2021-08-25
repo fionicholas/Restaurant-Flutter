@@ -21,6 +21,8 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       yield* _mapRestaurantDetailEventToState(event);
     } else if (event is AddedCustomerReviewsEvent) {
       yield* _mapAddCustomerReviewEventToState(event);
+    } else if (event is SearchRestaurantEvent) {
+      _mapSearchRestaurantEventToState(event);
     }
   }
 
@@ -61,8 +63,10 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       FetchedRestaurantDetailEvent event) async* {
     yield FetchRestaurantDetailLoadingState();
     try {
-      var detailRestaurantItem = await _restaurantRepository.getDetailRestaurant(event.id);
-      DetailRestaurant detailRestaurant = mapRestaurantDetail(detailRestaurantItem);
+      var detailRestaurantItem =
+          await _restaurantRepository.getDetailRestaurant(event.id);
+      DetailRestaurant detailRestaurant =
+          mapRestaurantDetail(detailRestaurantItem);
       yield FetchRestaurantDetailSuccessState(detailRestaurant);
     } on DioError catch (error) {
       var errorMessage = handleError(error);
@@ -70,6 +74,28 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       yield FetchRestaurantDetailErrorState(errorMessage);
     } on Error {
       yield FetchRestaurantDetailErrorState("Unknown Error");
+    }
+  }
+
+  Stream<RestaurantState> _mapSearchRestaurantEventToState(
+      SearchRestaurantEvent event) async* {
+    yield SearchRestaurantLoadingState();
+    try {
+      var restaurantsItem =
+          await _restaurantRepository.searchRestaurants(event.query);
+      List<Restaurant> restaurants =
+          restaurantsItem.map((item) => mapRestaurants(item)).toList();
+      if (restaurants.isNotEmpty) {
+        yield SearchRestaurantSuccessState(restaurants);
+      } else {
+        yield SearchRestaurantEmptyState('Data tidak ditemukan');
+      }
+    } on DioError catch (error) {
+      var errorMessage = handleError(error);
+      print(errorMessage);
+      yield SearchRestaurantErrorState(errorMessage);
+    } on Error {
+      yield SearchRestaurantErrorState("Unknown Error");
     }
   }
 }
