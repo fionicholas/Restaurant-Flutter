@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/bloc/model/restaurant.dart';
 import 'package:restaurant_app/ui/detail/detail_restaurant_page.dart';
 import 'package:restaurant_app/ui/main/main_page.dart';
 import 'package:restaurant_app/ui/review/add_review_page.dart';
+import 'package:restaurant_app/ui/search/search_page.dart';
 
 class Routes {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
@@ -23,6 +23,8 @@ class Routes {
         );
       case MainApp.routeName:
         return MaterialPageRoute(builder: (_) => MainApp());
+      case SearchPage.routeName:
+        return MaterialPageRoute(builder: (_) => SearchPage());
       default:
         return null;
     }
