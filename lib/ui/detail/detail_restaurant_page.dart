@@ -1,17 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/data/model/restaurant_item.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant_bloc.dart';
+import 'package:restaurant_app/ui/detail/components/container_customer_reviews.dart';
+import 'package:restaurant_app/ui/detail/components/container_drinks.dart';
+import 'package:restaurant_app/ui/detail/components/container_foods.dart';
+import 'package:restaurant_app/ui/review/add_review_page.dart';
+import 'package:restaurant_app/ui/shared/custom_button.dart';
+import 'package:restaurant_app/utils/assets.dart';
 import 'package:restaurant_app/utils/colors.dart';
 
 import '../shared/custom_error_image.dart';
 import '../shared/custom_loading_indicator.dart';
-import '../shared/custom_menus_card.dart';
 
 class DetailRestaurantPage extends StatefulWidget {
-  final RestaurantItem restaurantItem;
+  final String id;
 
-  const DetailRestaurantPage({Key? key, required this.restaurantItem})
-      : super(key: key);
+  const DetailRestaurantPage({Key? key, required this.id}) : super(key: key);
 
   static const String routeName = '/detail_restaurant';
 
@@ -33,22 +40,24 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
     super.dispose();
     _scrollController.dispose();
   }
+
   @override
   void initState() {
     super.initState();
+    _fetchRestaurantDetail();
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       _collapsingAppBarNotifier.value = _scrollController.offset;
     });
   }
 
-  Widget _appBarTitle() {
+  Widget _appBarTitle(String name) {
     return ValueListenableBuilder(
       valueListenable: _collapsingAppBarNotifier,
       builder: (BuildContext context, double value, Widget? child) {
         if (value >= _scrollDistance) {
           return Text(
-            widget.restaurantItem.name,
+            name,
             overflow: TextOverflow.ellipsis,
             maxLines: 1,
             style: TextStyle(
@@ -67,170 +76,218 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            brightness: Brightness.dark,
-            backgroundColor: primaryColor,
-            elevation: 0.0,
-            expandedHeight: _silverAppBarExtendedHeight,
-            floating: false,
-            leading: Container(
-              margin: EdgeInsets.only(left: 16),
-              decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.50),
-                  shape: BoxShape.circle),
-              child: GestureDetector(
-                child: Icon(Icons.arrow_back),
-                onTap: () => Navigator.of(context).pop(),
+      body: BlocBuilder<RestaurantBloc, RestaurantState>(
+        buildWhen: (previousState, state) {
+          return state is FetchRestaurantDetailLoadingState ||
+              state is FetchRestaurantDetailSuccessState ||
+              state is FetchRestaurantDetailErrorState;
+        },
+        builder: (context, state) {
+          if (state is FetchRestaurantDetailSuccessState) {
+            DetailRestaurant detailRestaurant = state.detailRestaurant;
+            return _buildPage(detailRestaurant);
+          } else if (state is FetchRestaurantDetailLoadingState) {
+            return Padding(
+              padding: EdgeInsets.only(top: 100),
+              child: Center(
+                child: CircularProgressIndicator(),
               ),
-            ),
-            title: _appBarTitle(),
-            pinned: true,
-            flexibleSpace: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                _top = constraints.biggest.height;
-                return Stack(
-                  children: [
-                    FlexibleSpaceBar(
-                      background: Hero(
-                        tag: widget.restaurantItem.pictureId,
-                        child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          imageUrl: widget.restaurantItem.pictureId,
-                          placeholder: (context, url) => CustomLoadingIndicator(),
-                          errorWidget: (context, url, error) =>
-                              CustomErrorImage(),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: _paddingTopOfTitle,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(24.0),
-                              topRight: Radius.circular(24.0),
-                            ),
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      visible: (_top >
-                          MediaQuery.of(context).padding.top + kToolbarHeight),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          SliverPadding(
-            padding:
-                const EdgeInsets.fromLTRB(24, 16, 24,16),
-            sliver: SliverFillRemaining(
-              child: SingleChildScrollView(
-                physics: NeverScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.restaurantItem.name,
-                      style: Theme.of(context).textTheme.subtitle1,
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(height: 12.0),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_pin,
-                          color: primaryColor,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 2,
-                        ),
-                        Text(widget.restaurantItem.city,
-                            style: Theme.of(context).textTheme.bodyText1)
-                      ],
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Text(
-                      'Overview',
-                      style: Theme.of(context).textTheme.subtitle2,
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(
-                      height: 4,
-                    ),
-                    Text(
-                      widget.restaurantItem.description,
-                      style: Theme.of(context).textTheme.caption,
-                      textAlign: TextAlign.justify,
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      'Foods',
-                      style: Theme.of(context).textTheme.subtitle2,
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width / 2,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: widget.restaurantItem.menus.foods.length,
-                          itemBuilder: (context, index) {
-                            return CustomMenusCard(
-                                image: 'assets/images/ic_foods.jpg',
-                                name: widget
-                                    .restaurantItem.menus.foods[index].name);
-                          }),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Text(
-                      'Drinks',
-                      style: Theme.of(context).textTheme.subtitle2,
-                      textAlign: TextAlign.start,
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width / 2,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: widget.restaurantItem.menus.drinks.length,
-                          itemBuilder: (context, index) {
-                            return CustomMenusCard(
-                                image: 'assets/images/ic_drinks.jpg',
-                                name: widget
-                                    .restaurantItem.menus.drinks[index].name);
-                          }),
-                    )
-                  ],
-                ),
+            );
+          } else if (state is FetchRestaurantDetailErrorState) {
+            return Center(
+              child: Center(
+                child: Text(state.message),
               ),
-            ),
-          ),
-        ],
+            );
+          } else {
+            return Padding(
+              padding: EdgeInsets.only(top: 100),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        },
       ),
     );
+  }
+
+  _buildPage(DetailRestaurant detailRestaurant) {
+    return CustomScrollView(
+      controller: _scrollController,
+      slivers: [
+        SliverAppBar(
+          brightness: Brightness.dark,
+          backgroundColor: primaryColor,
+          elevation: 0.0,
+          expandedHeight: _silverAppBarExtendedHeight,
+          floating: false,
+          leading: Container(
+            margin: EdgeInsets.only(left: 16),
+            decoration: BoxDecoration(
+                color: primaryColor.withOpacity(0.50), shape: BoxShape.circle),
+            child: GestureDetector(
+              child: Icon(Icons.arrow_back),
+              onTap: () => Navigator.of(context).pop(),
+            ),
+          ),
+          title: _appBarTitle(detailRestaurant.name),
+          pinned: true,
+          flexibleSpace: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              _top = constraints.biggest.height;
+              return Stack(
+                children: [
+                  FlexibleSpaceBar(
+                    background: Hero(
+                      tag: detailRestaurant.pictureId,
+                      child: CachedNetworkImage(
+                        fit: BoxFit.cover,
+                        imageUrl: LARGE_IMAGE_URL + detailRestaurant.pictureId,
+                        placeholder: (context, url) => CustomLoadingIndicator(),
+                        errorWidget: (context, url, error) =>
+                            CustomErrorImage(),
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: _paddingTopOfTitle,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(24.0),
+                            topRight: Radius.circular(24.0),
+                          ),
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    visible: (_top >
+                        MediaQuery.of(context).padding.top + kToolbarHeight),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+          sliver: SliverFillRemaining(
+            child: SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    detailRestaurant.name,
+                    style: Theme.of(context).textTheme.subtitle1,
+                    textAlign: TextAlign.start,
+                  ),
+                  SizedBox(height: 12.0),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_pin,
+                        color: primaryColor,
+                        size: 20,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(detailRestaurant.city,
+                          style: Theme.of(context).textTheme.bodyText1)
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    'Overview',
+                    style: Theme.of(context).textTheme.subtitle2,
+                    textAlign: TextAlign.start,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    detailRestaurant.description,
+                    style: Theme.of(context).textTheme.caption,
+                    textAlign: TextAlign.justify,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    'Foods',
+                    style: Theme.of(context).textTheme.subtitle2,
+                    textAlign: TextAlign.start,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  ContainerFoods(
+                    detailRestaurant: detailRestaurant,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    'Drinks',
+                    style: Theme.of(context).textTheme.subtitle2,
+                    textAlign: TextAlign.start,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  ContainerDrinks(
+                    detailRestaurant: detailRestaurant,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Customer Reviews',
+                        style: Theme.of(context).textTheme.subtitle2,
+                        textAlign: TextAlign.start,
+                      ),
+                      CustomButton(
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushNamed(AddReviewPage.routeName, arguments: detailRestaurant.id).then((value) => _onPageClosed(value));
+                        },
+                        textButton: 'Add Review',
+                        btnColor: primaryColor,
+                        textColor: Colors.white,
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  ContainerCustomerReviews(
+                    detailRestaurant: detailRestaurant,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  _fetchRestaurantDetail() {
+    context
+        .read<RestaurantBloc>()
+        .add(FetchedRestaurantDetailEvent(id: widget.id));
+  }
+
+  _onPageClosed(void value) {
+    _fetchRestaurantDetail();
   }
 }
