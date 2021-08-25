@@ -22,9 +22,7 @@ final TextTheme myTextTheme = TextTheme(
   subtitle1: GoogleFonts.libreFranklin(
       fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.15),
   subtitle2: GoogleFonts.libreFranklin(
-      fontSize: 13,
-      fontWeight: FontWeight.bold,
-      letterSpacing: 0.1),
+      fontSize: 13, fontWeight: FontWeight.bold, letterSpacing: 0.1),
   bodyText1: GoogleFonts.libreFranklin(
       fontSize: 14,
       fontWeight: FontWeight.w400,
@@ -45,15 +43,26 @@ final TextTheme myTextTheme = TextTheme(
 
 InputDecorationTheme inputDecorationTheme() {
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: primaryColor.withOpacity(0.35)),
-      borderRadius: BorderRadius.circular(4),
+      borderSide: BorderSide(color: colorSolitude),
+      borderRadius: BorderRadius.circular(10),
+      gapPadding: 10);
+
+  OutlineInputBorder focusedOutlineInputBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: colorSecondary),
+      borderRadius: BorderRadius.circular(10),
+      gapPadding: 10);
+
+  OutlineInputBorder disabledOutlineInputBorder = OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.circular(10),
       gapPadding: 10);
 
   return InputDecorationTheme(
       contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 16),
       filled: true,
-      fillColor: primary2Color,
+      fillColor: colorSolitude,
       enabledBorder: outlineInputBorder,
-      focusedBorder: outlineInputBorder,
+      focusedBorder: focusedOutlineInputBorder,
+      disabledBorder: disabledOutlineInputBorder,
       border: outlineInputBorder);
 }

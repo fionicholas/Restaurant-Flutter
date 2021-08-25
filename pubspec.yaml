@@ -31,6 +31,7 @@ dependencies:
   google_fonts: ^2.0.0
   cached_network_image: ^3.0.0
   fluttertoast: ^8.0.8
+  flutter_svg: ^0.22.0
 
   #bloc
   flutter_bloc: ^7.0.0
@@ -49,6 +50,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^2.0.4
+  retrofit_generator: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
