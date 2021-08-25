@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/data/model/restaurant_item.dart';
-import 'package:restaurant_app/data/parser/restaurant_parser.dart';
-import 'package:restaurant_app/ui/shared/custom_loading_indicator.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_app/bloc/model/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant_state.dart';
 import 'package:restaurant_app/ui/detail/detail_restaurant_page.dart';
+import 'package:restaurant_app/ui/shared/custom_loading_indicator.dart';
+import 'package:restaurant_app/utils/assets.dart';
 import 'package:restaurant_app/utils/colors.dart';
 
 import '../shared/custom_error_image.dart';
@@ -15,6 +18,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _fetchRestaurant(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -24,23 +28,49 @@ class MainApp extends StatelessWidget {
         brightness: Brightness.dark,
         backgroundColor: primaryColor,
       ),
-      body: SafeArea(
-        child: FutureBuilder<String>(
-          future: DefaultAssetBundle.of(context)
-              .loadString('assets/restaurants.json'),
-          builder: (context, snapshot) {
-            final List<RestaurantItem> restaurants =
-                parseRestaurants(snapshot.data);
+      body: BlocBuilder<RestaurantBloc, RestaurantState>(
+        buildWhen: (previousState, state) {
+          return state is FetchRestaurantsErrorState ||
+              state is FetchRestaurantsLoadingState ||
+              state is FetchRestaurantsSuccessState;
+        },
+        builder: (context, state) {
+          if (state is FetchRestaurantsSuccessState) {
+            List<Restaurant> restaurants = state.restaurants;
             return MainPage(restaurants: restaurants);
-          },
-        ),
+          } else if (state is FetchRestaurantsLoadingState) {
+            return Padding(
+              padding: EdgeInsets.only(top: 100),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          } else if (state is FetchRestaurantsErrorState) {
+            return Center(
+              child: Center(
+                child: Text(state.message),
+              ),
+            );
+          } else {
+            return Padding(
+              padding: EdgeInsets.only(top: 100),
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        },
       ),
     );
+  }
+
+  _fetchRestaurant(BuildContext context) {
+    context.read<RestaurantBloc>().add(FetchedRestaurantsEvent());
   }
 }
 
 class MainPage extends StatefulWidget {
-  final List<RestaurantItem> restaurants;
+  final List<Restaurant> restaurants;
 
   const MainPage({Key? key, required this.restaurants}) : super(key: key);
 
@@ -51,7 +81,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   TextEditingController searchController = new TextEditingController();
 
-  List<RestaurantItem> _searchResult = [];
+  List<Restaurant> _searchResult = [];
 
   @override
   void dispose() {
@@ -76,12 +106,11 @@ class _MainPageState extends State<MainPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  style: TextStyle(fontSize: 14, color: whiteColor),
+                  style: TextStyle(fontSize: 14),
                   keyboardType: TextInputType.text,
                   controller: searchController,
                   decoration: InputDecoration(
                     hintText: 'Search...',
-                    hintStyle: TextStyle(color: whiteColor),
                     suffixIcon: InkWell(
                         onTap: () {
                           onSearchQuery(searchController.text);
@@ -89,7 +118,7 @@ class _MainPageState extends State<MainPage> {
                         child: Icon(
                           Icons.search,
                           size: 16,
-                          color: whiteColor,
+                          color: primaryColor,
                         )),
                   ),
                 ),
@@ -149,7 +178,7 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Widget _buildContainerMain(RestaurantItem data) {
+  Widget _buildContainerMain(Restaurant data) {
     return Container(
       margin: EdgeInsets.fromLTRB(16, 12, 16, 8),
       decoration: BoxDecoration(
@@ -170,7 +199,7 @@ class _MainPageState extends State<MainPage> {
           borderRadius: BorderRadius.circular(8),
           onTap: () {
             Navigator.of(context)
-                .pushNamed(DetailRestaurantPage.routeName, arguments: data);
+                .pushNamed(DetailRestaurantPage.routeName, arguments: data.id);
           },
           child: Row(
             children: [
@@ -184,7 +213,7 @@ class _MainPageState extends State<MainPage> {
                     tag: data.pictureId,
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl: data.pictureId,
+                      imageUrl: MEDIUM_IMAGE_URL + data.pictureId,
                       placeholder: (context, url) => CustomLoadingIndicator(),
                       errorWidget: (context, url, error) => CustomErrorImage(),
                     ),
