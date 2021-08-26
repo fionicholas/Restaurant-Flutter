@@ -258,7 +258,9 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
                       CustomButton(
                         onPressed: () {
                           Navigator.of(context)
-                              .pushNamed(AddReviewPage.routeName, arguments: detailRestaurant.id).then((value) => _onPageClosed(value));
+                              .pushNamed(AddReviewPage.routeName,
+                                  arguments: detailRestaurant.id)
+                              .then((value) => _onPageClosed(value));
                         },
                         textButton: 'Add Review',
                         btnColor: primaryColor,

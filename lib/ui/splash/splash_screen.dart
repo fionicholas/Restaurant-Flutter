@@ -44,32 +44,33 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-          child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FadeTransition(
-              opacity: _animation,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      width: 80,
-                      height: 80,
-                      child: Image.asset('assets/images/dicoding_logo.jpeg')),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Text(
-                    'Restaurant App',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  )
-                ],
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FadeTransition(
+                opacity: _animation,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        width: 80,
+                        height: 80,
+                        child: Image.asset('assets/images/dicoding_logo.jpeg')),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Text(
+                      'Restaurant App',
+                      style: Theme.of(context).textTheme.subtitle1,
+                    )
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 

@@ -106,22 +106,23 @@ class _AddReviewBodyState extends State<AddReviewBody> {
                 width: double.infinity,
                 height: 40,
                 child: CustomButton(
-                    btnColor: primaryColor,
-                    textColor: Colors.white,
-                    textButton: 'Add Review',
-                    onPressed: () {
-                      if (_addReviewKey.currentState!.validate()) {
-                        _addReviewKey.currentState!.save();
-                        var _request = CustomerReviewRequest(
-                            id: widget.id,
-                            review: _reviewController.text,
-                            name: _nameController.text);
+                  btnColor: primaryColor,
+                  textColor: Colors.white,
+                  textButton: 'Add Review',
+                  onPressed: () {
+                    if (_addReviewKey.currentState!.validate()) {
+                      _addReviewKey.currentState!.save();
+                      var _request = CustomerReviewRequest(
+                          id: widget.id,
+                          review: _reviewController.text,
+                          name: _nameController.text);
 
-                        context.read<RestaurantBloc>().add(
-                            AddedCustomerReviewsEvent(
-                                customerReviewRequest: _request));
-                      }
-                    }),
+                      context.read<RestaurantBloc>().add(
+                          AddedCustomerReviewsEvent(
+                              customerReviewRequest: _request));
+                    }
+                  },
+                ),
               )
             ],
           ),
