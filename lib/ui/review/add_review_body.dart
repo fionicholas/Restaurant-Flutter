@@ -23,6 +23,13 @@ class _AddReviewBodyState extends State<AddReviewBody> {
   final _addReviewKey = new GlobalKey<FormState>();
 
   @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+    _reviewController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<RestaurantBloc, RestaurantState>(
       listener: (context, state) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
 import 'package:restaurant_app/ui/shared/custom_menus_card.dart';
+import 'package:restaurant_app/utils/assets.dart';
 
 class ContainerFoods extends StatelessWidget {
   final DetailRestaurant detailRestaurant;
@@ -20,7 +21,7 @@ class ContainerFoods extends StatelessWidget {
           itemCount: detailRestaurant.menu.foods.length,
           itemBuilder: (context, index) {
             return CustomMenusCard(
-                image: 'assets/images/ic_foods.jpg',
+                image: FOODS_ICON,
                 name: detailRestaurant.menu.foods[index].name);
           }),
     );

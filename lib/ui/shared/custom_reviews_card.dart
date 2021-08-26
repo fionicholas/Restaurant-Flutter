@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:restaurant_app/bloc/model/customer_reviews.dart';
+import 'package:restaurant_app/utils/assets.dart';
 import 'package:restaurant_app/utils/colors.dart';
 
 class CustomReviewsCard extends StatelessWidget {
@@ -25,7 +26,7 @@ class CustomReviewsCard extends StatelessWidget {
           Row(
             children: [
               SvgPicture.asset(
-                'assets/images/ic_user.svg',
+                USER_ICON,
                 width: 40,
               ),
               SizedBox(
