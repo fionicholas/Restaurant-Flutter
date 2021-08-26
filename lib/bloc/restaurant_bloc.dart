@@ -22,7 +22,7 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
     } else if (event is AddedCustomerReviewsEvent) {
       yield* _mapAddCustomerReviewEventToState(event);
     } else if (event is SearchRestaurantEvent) {
-      _mapSearchRestaurantEventToState(event);
+      yield* _mapSearchRestaurantEventToState(event);
     }
   }
 

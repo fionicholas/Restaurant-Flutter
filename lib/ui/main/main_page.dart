@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // _fetchRestaurant(context);
+    _fetchRestaurant(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,

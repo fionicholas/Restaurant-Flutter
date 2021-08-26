@@ -15,11 +15,25 @@ class SearchBody extends StatefulWidget {
 }
 
 class _SearchBodyState extends State<SearchBody> {
+  TextEditingController _searchController = new TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRestaurant(context, _searchController.text);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController searchController = new TextEditingController();
     return SingleChildScrollView(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: EdgeInsets.all(16),
@@ -34,12 +48,12 @@ class _SearchBodyState extends State<SearchBody> {
                 TextFormField(
                   style: TextStyle(fontSize: 14),
                   keyboardType: TextInputType.text,
-                  controller: searchController,
+                  controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Search...',
                     suffixIcon: InkWell(
                         onTap: () {
-                          _fetchRestaurant(context);
+                          _fetchRestaurant(context, _searchController.text);
                         },
                         child: Icon(
                           Icons.search,
@@ -57,32 +71,54 @@ class _SearchBodyState extends State<SearchBody> {
     );
   }
 
-  _fetchRestaurant(BuildContext context) {
-    context.read<RestaurantBloc>().add(FetchedRestaurantsEvent());
+  _fetchRestaurant(BuildContext context, String query) {
+    context.read<RestaurantBloc>().add(SearchRestaurantEvent(
+          query: query,
+        ));
   }
 
   Widget _buildPage() {
     return BlocBuilder<RestaurantBloc, RestaurantState>(
       buildWhen: (previousState, state) {
-        return state is FetchRestaurantsErrorState ||
-            state is FetchRestaurantsLoadingState ||
-            state is FetchRestaurantsSuccessState;
+        return state is SearchRestaurantErrorState ||
+            state is SearchRestaurantLoadingState ||
+            state is SearchRestaurantSuccessState ||
+            state is SearchRestaurantEmptyState;
       },
       builder: (context, state) {
-        if (state is FetchRestaurantsSuccessState) {
+        if (state is SearchRestaurantSuccessState) {
           List<Restaurant> restaurants = state.restaurants;
           return _buildList(restaurants: restaurants);
-        } else if (state is FetchRestaurantsLoadingState) {
+        } else if (state is SearchRestaurantLoadingState) {
           return Padding(
-            padding: EdgeInsets.only(top: 100),
+            padding: EdgeInsets.only(top: 200),
             child: Center(
               child: CircularProgressIndicator(),
             ),
           );
-        } else if (state is FetchRestaurantsErrorState) {
+        } else if (state is SearchRestaurantErrorState) {
           return Center(
             child: Center(
               child: Text(state.message),
+            ),
+          );
+        } else if (state is SearchRestaurantEmptyState) {
+          return Padding(
+            padding: EdgeInsets.only(top: 200),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.error,
+                    color: Colors.red,
+                    size: 40,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(state.message),
+                ],
+              ),
             ),
           );
         } else {
@@ -98,18 +134,17 @@ class _SearchBodyState extends State<SearchBody> {
   }
 
   _buildList({required List<Restaurant> restaurants}) {
-    return Column(
-      children: [
-        ListView.builder(
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          shrinkWrap: true,
-          itemCount: restaurants.length,
-          itemBuilder: (context, index) {
-            return ContainerRestaurants(data: restaurants[index]);
-          },
-        )
-      ],
+    return SizedBox(
+      height: MediaQuery.of(context).size.height - 164,
+      child: ListView.builder(
+        physics: BouncingScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: restaurants.length,
+        itemBuilder: (context, index) {
+          return ContainerRestaurants(data: restaurants[index]);
+        },
+      ),
     );
   }
 }
