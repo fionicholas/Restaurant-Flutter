@@ -46,6 +46,8 @@ dependencies:
   #network
   dio: ^4.0.0
   retrofit: ^2.0.0
+  #bottom_navigation
+  curved_navigation_bar: ^1.0.1
 
 dev_dependencies:
   flutter_test:
