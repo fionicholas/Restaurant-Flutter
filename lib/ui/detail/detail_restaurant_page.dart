@@ -34,6 +34,7 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
   final _scrollDistance = _silverAppBarExtendedHeight - kToolbarHeight;
   ValueNotifier<double> _collapsingAppBarNotifier = ValueNotifier(0.0);
   late ScrollController _scrollController;
+  bool _isFavorite = false;
 
   @override
   void dispose() {
@@ -180,24 +181,35 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    detailRestaurant.name,
-                    style: Theme.of(context).textTheme.subtitle1,
-                    textAlign: TextAlign.start,
-                  ),
-                  SizedBox(height: 12.0),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.location_pin,
-                        color: primaryColor,
-                        size: 20,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            detailRestaurant.name,
+                            style: Theme.of(context).textTheme.subtitle1,
+                            textAlign: TextAlign.start,
+                          ),
+                          SizedBox(height: 12.0),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_pin,
+                                color: primaryColor,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Text(detailRestaurant.city,
+                                  style: Theme.of(context).textTheme.bodyText1)
+                            ],
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(detailRestaurant.city,
-                          style: Theme.of(context).textTheme.bodyText1)
+                      (_isFavorite) ? _buttonFavorite() : _buttonNotFavorite(),
                     ],
                   ),
                   SizedBox(
@@ -280,6 +292,58 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
           ),
         ),
       ],
+    );
+  }
+
+  _buttonNotFavorite() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          setState(() {
+            _isFavorite = true;
+          });
+        },
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.pinkAccent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            Icons.favorite_border,
+            size: 28,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttonFavorite() {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          setState(() {
+            _isFavorite = false;
+          });
+        },
+        child: Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.pinkAccent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            Icons.favorite,
+            size: 28,
+            color: Colors.white,
+          ),
+        ),
+      ),
     );
   }
 
