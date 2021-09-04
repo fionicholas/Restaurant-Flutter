@@ -1,3 +1,5 @@
+import 'package:restaurant_app/data/local/favorite_dao.dart';
+import 'package:restaurant_app/data/model/favorite_entity.dart';
 import 'package:restaurant_app/data/model/request/customer_review_request.dart';
 import 'package:restaurant_app/data/model/response/customer_reviews_item.dart';
 import 'package:restaurant_app/data/model/response/detail_restaurant_item.dart';
@@ -7,8 +9,9 @@ import 'package:restaurant_app/data/restaurant_repository.dart';
 
 class RestaurantDataSource extends RestaurantRepository {
   final RestaurantApi _restaurantApi;
+  final FavoriteDao _favoriteDao;
 
-  RestaurantDataSource(this._restaurantApi);
+  RestaurantDataSource(this._restaurantApi, this._favoriteDao);
 
   @override
   Future<List<CustomerReviewsItem>> addCustomerReview(
@@ -38,5 +41,25 @@ class RestaurantDataSource extends RestaurantRepository {
     return _restaurantApi
         .searchRestaurants(query)
         .then((value) => value.restaurants);
+  }
+
+  @override
+  Future addToFavorite(FavoriteEntity favoriteEntity) {
+    return _favoriteDao.addToFavorite(favoriteEntity);
+  }
+
+  @override
+  Future checkFavoriteById(String id) {
+    return _favoriteDao.checkFavoriteById(id: id);
+  }
+
+  @override
+  Future deleteFavorite(String id) {
+    return _favoriteDao.deleteFavorite(id);
+  }
+
+  @override
+  Future getFavorites() {
+    return _favoriteDao.getFavorites();
   }
 }

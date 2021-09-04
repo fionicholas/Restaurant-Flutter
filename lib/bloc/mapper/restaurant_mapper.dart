@@ -3,6 +3,7 @@ import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
 import 'package:restaurant_app/bloc/model/menu.dart';
 import 'package:restaurant_app/bloc/model/restaurant.dart';
 import 'package:restaurant_app/bloc/model/shared_name.dart';
+import 'package:restaurant_app/data/model/favorite_entity.dart';
 import 'package:restaurant_app/data/model/response/customer_reviews_item.dart';
 import 'package:restaurant_app/data/model/response/detail_restaurant_item.dart';
 import 'package:restaurant_app/data/model/response/menu_response.dart';
@@ -62,5 +63,27 @@ CustomerReviews mapCustomerReviews(CustomerReviewsItem customerReviewsItem) {
     name: customerReviewsItem.name ?? '',
     review: customerReviewsItem.review ?? '',
     date: customerReviewsItem.date ?? '',
+  );
+}
+
+FavoriteEntity mapFavoriteEntity(Restaurant restaurant) {
+  return FavoriteEntity(
+    id: restaurant.id ?? '',
+    city: restaurant.city ?? '',
+    image: restaurant.pictureId ?? '',
+    rating: restaurant.rating.toString(),
+    name: restaurant.name ?? '',
+    description: restaurant.description ?? '',
+  );
+}
+
+Restaurant mapFavoriteToItem(FavoriteEntity favoriteEntity) {
+  return Restaurant(
+    id: favoriteEntity.id,
+    city: favoriteEntity.city,
+    pictureId: favoriteEntity.image,
+    rating: double.parse(favoriteEntity.rating),
+    name: favoriteEntity.name,
+    description: favoriteEntity.description,
   );
 }

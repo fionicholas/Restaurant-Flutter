@@ -1,3 +1,4 @@
+import 'package:restaurant_app/data/model/favorite_entity.dart';
 import 'package:restaurant_app/data/model/request/customer_review_request.dart';
 import 'package:restaurant_app/data/model/response/restaurant_item.dart';
 
@@ -14,4 +15,10 @@ abstract class RestaurantRepository {
   Future<DetailRestaurantItem> getDetailRestaurant(String id);
 
   Future<List<RestaurantItem>> searchRestaurants(String query);
+
+  Future getFavorites();
+
+  Future addToFavorite(FavoriteEntity favoriteEntity);
+  Future deleteFavorite(String id);
+  Future checkFavoriteById(String id);
 }
