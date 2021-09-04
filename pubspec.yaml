@@ -49,6 +49,13 @@ dependencies:
   #bottom_navigation
   curved_navigation_bar: ^1.0.1
 
+  #database local
+  sqflite: ^2.0.0+4
+
+  path_provider: ^2.0.3
+
+  path: ^1.8.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
