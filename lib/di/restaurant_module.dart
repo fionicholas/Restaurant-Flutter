@@ -9,6 +9,6 @@ void injectRestaurantModuleModule() {
   locator.registerSingleton(RestaurantApiClient(locator.get()));
   locator.registerSingleton(RestaurantApi(locator.get()));
   locator.registerSingleton<RestaurantRepository>(
-      RestaurantDataSource(locator.get()));
+      RestaurantDataSource(locator.get(), locator.get()));
   locator.registerSingleton(RestaurantBloc(locator.get()));
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
 import 'package:restaurant_app/bloc/model/restaurant.dart';
 import 'package:restaurant_app/bloc/restaurant.dart';
+import 'package:restaurant_app/data/model/favorite_entity.dart';
 import 'package:restaurant_app/data/restaurant_repository.dart';
 import 'package:restaurant_app/utils/error_handler.dart';
 
@@ -23,6 +24,14 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       yield* _mapAddCustomerReviewEventToState(event);
     } else if (event is SearchRestaurantEvent) {
       yield* _mapSearchRestaurantEventToState(event);
+    } else if (event is FetchedFavoritesEvent) {
+      yield* _mapFetchFavoriteEventToState(event);
+    } else if (event is AddToFavoriteEvent) {
+      yield* _mapAddToFavoriteEventToState(event);
+    } else if (event is DeleteFavoriteEvent) {
+      yield* _mapDeleteFavoriteEventToState(event);
+    } else if (event is CheckFavoriteEvent) {
+      yield* _mapCheckFavoriteEventToState(event);
     }
   }
 
@@ -96,6 +105,56 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       yield SearchRestaurantErrorState(errorMessage);
     } on Error {
       yield SearchRestaurantErrorState("Unknown Error");
+    }
+  }
+
+  Stream<RestaurantState> _mapAddToFavoriteEventToState(
+      AddToFavoriteEvent event) async* {
+    yield AddToFavoriteLoadingState();
+    try {
+      await _restaurantRepository
+          .addToFavorite(mapFavoriteEntity(event.restaurant));
+      yield AddToFavoriteSuccessState();
+    } catch (e) {
+      yield AddToFavoriteErrorState(e.toString());
+    }
+  }
+
+  Stream<RestaurantState> _mapDeleteFavoriteEventToState(
+      DeleteFavoriteEvent event) async* {
+    yield DeleteFavoriteLoadingState();
+    try {
+      await _restaurantRepository.deleteFavorite(event.id);
+      yield DeleteFavoriteSuccessState();
+    } catch (e) {
+      yield DeleteFavoriteErrorState(e.toString());
+    }
+  }
+
+  Stream<RestaurantState> _mapCheckFavoriteEventToState(
+      CheckFavoriteEvent event) async* {
+    yield CheckFavoriteLoadingState();
+    try {
+      FavoriteEntity favoriteEntity =
+          await _restaurantRepository.checkFavoriteById(event.id);
+      yield CheckFavoriteSuccessState(
+          favoriteEntity: favoriteEntity,
+          isFavorite: favoriteEntity.id != null ? true : false);
+    } catch (e) {
+      yield CheckFavoriteErrorState(e.toString());
+    }
+  }
+
+  Stream<RestaurantState> _mapFetchFavoriteEventToState(
+      FetchedFavoritesEvent event) async* {
+    yield FetchFavoritesLoadingState();
+    try {
+      List<FavoriteEntity> favorites =
+          await _restaurantRepository.getFavorites();
+      yield FetchFavoritesSuccessState(
+          favorites.map((e) => mapFavoriteToItem(e)).toList());
+    } catch (e) {
+      yield FetchFavoritesErrorState(e.toString());
     }
   }
 }
