@@ -142,7 +142,9 @@ class _SearchBodyState extends State<SearchBody> {
         shrinkWrap: true,
         itemCount: restaurants.length,
         itemBuilder: (context, index) {
-          return ContainerRestaurants(data: restaurants[index]);
+          return ContainerRestaurants(
+            data: restaurants[index],
+          );
         },
       ),
     );

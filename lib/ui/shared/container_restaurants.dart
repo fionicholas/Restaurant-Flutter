@@ -8,7 +8,7 @@ import 'package:restaurant_app/utils/colors.dart';
 import 'custom_error_image.dart';
 import 'custom_loading_indicator.dart';
 
-class ContainerRestaurants extends StatelessWidget {
+class ContainerRestaurants extends StatefulWidget {
   final Restaurant data;
 
   const ContainerRestaurants({
@@ -16,6 +16,11 @@ class ContainerRestaurants extends StatelessWidget {
     required this.data,
   }) : super(key: key);
 
+  @override
+  _ContainerRestaurantsState createState() => _ContainerRestaurantsState();
+}
+
+class _ContainerRestaurantsState extends State<ContainerRestaurants> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -37,8 +42,10 @@ class ContainerRestaurants extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(8),
           onTap: () {
-            Navigator.of(context)
-                .pushNamed(DetailRestaurantPage.routeName, arguments: data.id);
+            Navigator.of(context).pushNamed(
+              DetailRestaurantPage.routeName,
+              arguments: widget.data.id,
+            );
           },
           child: Row(
             children: [
@@ -49,10 +56,10 @@ class ContainerRestaurants extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Hero(
-                    tag: data.pictureId,
+                    tag: widget.data.pictureId,
                     child: CachedNetworkImage(
                       fit: BoxFit.cover,
-                      imageUrl: MEDIUM_IMAGE_URL + data.pictureId,
+                      imageUrl: MEDIUM_IMAGE_URL + widget.data.pictureId,
                       placeholder: (context, url) => CustomLoadingIndicator(),
                       errorWidget: (context, url, error) => CustomErrorImage(),
                     ),
@@ -63,7 +70,7 @@ class ContainerRestaurants extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(data.name,
+                    Text(widget.data.name,
                         style: Theme.of(context).textTheme.subtitle2),
                     SizedBox(
                       height: 8,
@@ -78,7 +85,7 @@ class ContainerRestaurants extends StatelessWidget {
                         SizedBox(
                           width: 4,
                         ),
-                        Text(data.city,
+                        Text(widget.data.city,
                             style: Theme.of(context).textTheme.bodyText2)
                       ],
                     ),
@@ -95,7 +102,7 @@ class ContainerRestaurants extends StatelessWidget {
                         SizedBox(
                           width: 4,
                         ),
-                        Text(data.rating.toString(),
+                        Text(widget.data.rating.toString(),
                             style: Theme.of(context).textTheme.bodyText2)
                       ],
                     )
