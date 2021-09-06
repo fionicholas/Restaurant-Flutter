@@ -1,6 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/ui/favorite/favorites_screen.dart';
+import 'package:restaurant_app/ui/favorite/favorites_page.dart';
 import 'package:restaurant_app/ui/search/search_page.dart';
 import 'package:restaurant_app/utils/colors.dart';
 
@@ -16,7 +16,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  final FavoritesScreen _favorite = FavoritesScreen();
+  final FavoritesPage _favorite = FavoritesPage();
 
   Widget _showPages = HomePage();
 

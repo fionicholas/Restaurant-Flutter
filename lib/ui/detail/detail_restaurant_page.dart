@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:restaurant_app/bloc/mapper/restaurant_mapper.dart';
 import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
 import 'package:restaurant_app/bloc/restaurant.dart';
 import 'package:restaurant_app/bloc/restaurant_bloc.dart';
@@ -11,6 +13,7 @@ import 'package:restaurant_app/ui/review/add_review_page.dart';
 import 'package:restaurant_app/ui/shared/custom_button.dart';
 import 'package:restaurant_app/utils/assets.dart';
 import 'package:restaurant_app/utils/colors.dart';
+import 'package:restaurant_app/utils/dialog_utils.dart';
 
 import '../shared/custom_error_image.dart';
 import '../shared/custom_loading_indicator.dart';
@@ -34,7 +37,6 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
   final _scrollDistance = _silverAppBarExtendedHeight - kToolbarHeight;
   ValueNotifier<double> _collapsingAppBarNotifier = ValueNotifier(0.0);
   late ScrollController _scrollController;
-  bool _isFavorite = false;
 
   @override
   void dispose() {
@@ -46,6 +48,7 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
   void initState() {
     super.initState();
     _fetchRestaurantDetail();
+    _checkFavoriteById();
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       _collapsingAppBarNotifier.value = _scrollController.offset;
@@ -76,40 +79,82 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocBuilder<RestaurantBloc, RestaurantState>(
-        buildWhen: (previousState, state) {
-          return state is FetchRestaurantDetailLoadingState ||
-              state is FetchRestaurantDetailSuccessState ||
-              state is FetchRestaurantDetailErrorState;
-        },
-        builder: (context, state) {
-          if (state is FetchRestaurantDetailSuccessState) {
-            DetailRestaurant detailRestaurant = state.detailRestaurant;
-            return _buildPage(detailRestaurant);
-          } else if (state is FetchRestaurantDetailLoadingState) {
-            return Padding(
-              padding: EdgeInsets.only(top: 100),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          } else if (state is FetchRestaurantDetailErrorState) {
-            return Center(
-              child: Center(
-                child: Text(state.message),
-              ),
-            );
-          } else {
-            return Padding(
-              padding: EdgeInsets.only(top: 100),
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-        },
+    return WillPopScope(
+      onWillPop: () async {
+        _fetchFavorites();
+        return true;
+      },
+      child: Scaffold(
+        body: MultiBlocListener(
+          child: _blocDetailRestaurant(),
+          listeners: [
+            BlocListener<RestaurantBloc, RestaurantState>(
+              listener: (context, state) {
+                if (state is AddToFavoriteLoadingState) {
+                  showLoading(context);
+                } else if (state is AddToFavoriteSuccessState) {
+                  hideLoading(context);
+                  _checkFavoriteById();
+                  Fluttertoast.showToast(msg: 'Restaurant added to favorite');
+                } else if (state is AddToFavoriteErrorState) {
+                  hideLoading(context);
+                  Fluttertoast.showToast(msg: 'something wrong');
+                }
+              },
+            ),
+            BlocListener<RestaurantBloc, RestaurantState>(
+              listener: (context, state) {
+                if (state is DeleteFavoriteLoadingState) {
+                  showLoading(context);
+                } else if (state is DeleteFavoriteSuccessState) {
+                  hideLoading(context);
+                  _checkFavoriteById();
+                  Fluttertoast.showToast(msg: 'Remove from favorite');
+                } else if (state is DeleteFavoriteErrorState) {
+                  hideLoading(context);
+                  Fluttertoast.showToast(msg: 'something wrong');
+                }
+              },
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  _blocDetailRestaurant() {
+    return BlocBuilder<RestaurantBloc, RestaurantState>(
+      buildWhen: (previousState, state) {
+        return state is FetchRestaurantDetailLoadingState ||
+            state is FetchRestaurantDetailSuccessState ||
+            state is FetchRestaurantDetailErrorState;
+      },
+      builder: (context, state) {
+        if (state is FetchRestaurantDetailSuccessState) {
+          DetailRestaurant detailRestaurant = state.detailRestaurant;
+          return _buildPage(detailRestaurant);
+        } else if (state is FetchRestaurantDetailLoadingState) {
+          return Padding(
+            padding: EdgeInsets.only(top: 100),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (state is FetchRestaurantDetailErrorState) {
+          return Center(
+            child: Center(
+              child: Text(state.message),
+            ),
+          );
+        } else {
+          return Padding(
+            padding: EdgeInsets.only(top: 100),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -129,7 +174,7 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
                 color: primaryColor.withOpacity(0.50), shape: BoxShape.circle),
             child: GestureDetector(
               child: Icon(Icons.arrow_back),
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () => Navigator.maybePop(context),
             ),
           ),
           title: _appBarTitle(detailRestaurant.name),
@@ -209,7 +254,42 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
                           ),
                         ],
                       ),
-                      (_isFavorite) ? _buttonFavorite() : _buttonNotFavorite(),
+                      SizedBox(
+                        child: BlocBuilder<RestaurantBloc, RestaurantState>(
+                          buildWhen: (previousState, state) {
+                            return state is CheckFavoriteLoadingState ||
+                                state is FavoredState ||
+                                state is UnfavorableState;
+                          },
+                          builder: (context, state) {
+                            if (state is FavoredState) {
+                              var _isFavorite = state.isFavorite;
+                              return (_isFavorite)
+                                  ? _buttonFavorite(detailRestaurant.id)
+                                  : _buttonNotFavorite(detailRestaurant);
+                            } else if (state is UnfavorableState) {
+                              var _isFavorite = state.isFavorite;
+                              return (_isFavorite)
+                                  ? _buttonFavorite(detailRestaurant.id)
+                                  : _buttonNotFavorite(detailRestaurant);
+                            } else if (state is CheckFavoriteLoadingState) {
+                              return Padding(
+                                padding: EdgeInsets.only(top: 100),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            } else {
+                              return Padding(
+                                padding: EdgeInsets.only(top: 100),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      )
                     ],
                   ),
                   SizedBox(
@@ -295,15 +375,14 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
     );
   }
 
-  _buttonNotFavorite() {
+  _buttonNotFavorite(DetailRestaurant detailRestaurant) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          setState(() {
-            _isFavorite = true;
-          });
+          context.read<RestaurantBloc>().add(AddToFavoriteEvent(
+              restaurant: mapDetailToRestaurantItem(detailRestaurant)));
         },
         child: Container(
           padding: EdgeInsets.all(16),
@@ -321,15 +400,13 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
     );
   }
 
-  Widget _buttonFavorite() {
+  Widget _buttonFavorite(String id) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
-          setState(() {
-            _isFavorite = false;
-          });
+          context.read<RestaurantBloc>().add(DeleteFavoriteEvent(id: id));
         },
         child: Container(
           padding: EdgeInsets.all(16),
@@ -351,6 +428,14 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
     context
         .read<RestaurantBloc>()
         .add(FetchedRestaurantDetailEvent(id: widget.id));
+  }
+
+  _checkFavoriteById() {
+    BlocProvider.of<RestaurantBloc>(context).add(CheckFavoriteEvent(id: widget.id));
+  }
+
+  _fetchFavorites() {
+    context.read<RestaurantBloc>().add(FetchedFavoritesEvent());
   }
 
   _onPageClosed(void value) {

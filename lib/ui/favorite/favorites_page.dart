@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:restaurant_app/bloc/model/restaurant.dart';
-import 'package:restaurant_app/bloc/restaurant_bloc.dart';
-import 'package:restaurant_app/bloc/restaurant_event.dart';
-import 'package:restaurant_app/bloc/restaurant_state.dart';
+import 'package:restaurant_app/bloc/restaurant.dart';
 import 'package:restaurant_app/ui/shared/container_restaurants.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class FavoritesPage extends StatelessWidget {
+  const FavoritesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _fetchRestaurant(context);
+    _fetchFavorites(context);
     return BlocBuilder<RestaurantBloc, RestaurantState>(
       buildWhen: (previousState, state) {
-        return state is FetchRestaurantsErrorState ||
-            state is FetchRestaurantsLoadingState ||
-            state is FetchRestaurantsSuccessState;
+        return state is FetchFavoritesSuccessState ||
+            state is FetchFavoritesLoadingState ||
+            state is FetchFavoritesErrorState;
       },
       builder: (context, state) {
-        if (state is FetchRestaurantsSuccessState) {
+        print("DASDAD $state");
+        if (state is FetchFavoritesSuccessState) {
           List<Restaurant> restaurants = state.restaurants;
           return _buildHomePage(restaurants: restaurants);
-        } else if (state is FetchRestaurantsLoadingState) {
+        } else if (state is FetchFavoritesLoadingState) {
           return Padding(
             padding: EdgeInsets.only(top: 100),
             child: Center(
               child: CircularProgressIndicator(),
             ),
           );
-        } else if (state is FetchRestaurantsErrorState) {
+        } else if (state is FetchFavoritesErrorState) {
           return Center(
             child: Center(
               child: Text(state.message),
@@ -39,7 +38,7 @@ class HomePage extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.only(top: 100),
             child: Center(
-              child: CircularProgressIndicator(),
+              child: Text('ELSE'),
             ),
           );
         }
@@ -61,7 +60,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _fetchRestaurant(BuildContext context) {
-    context.read<RestaurantBloc>().add(FetchedRestaurantsEvent());
+  _fetchFavorites(BuildContext context) {
+    context.read<RestaurantBloc>().add(FetchedFavoritesEvent());
   }
 }
