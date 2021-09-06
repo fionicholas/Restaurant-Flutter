@@ -17,8 +17,10 @@ class DeleteFavoriteErrorState extends RestaurantState {
 }
 
 class DeleteFavoriteSuccessState extends RestaurantState {
-  DeleteFavoriteSuccessState() : super();
+  final bool isFavorite;
+
+  DeleteFavoriteSuccessState(this.isFavorite) : super();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isFavorite];
 }

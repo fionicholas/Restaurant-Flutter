@@ -68,22 +68,33 @@ CustomerReviews mapCustomerReviews(CustomerReviewsItem customerReviewsItem) {
 
 FavoriteEntity mapFavoriteEntity(Restaurant restaurant) {
   return FavoriteEntity(
-    id: restaurant.id ?? '',
-    city: restaurant.city ?? '',
-    image: restaurant.pictureId ?? '',
+    id: restaurant.id,
+    city: restaurant.city,
+    image: restaurant.pictureId,
     rating: restaurant.rating.toString(),
-    name: restaurant.name ?? '',
-    description: restaurant.description ?? '',
+    name: restaurant.name,
+    description: restaurant.description,
   );
 }
 
 Restaurant mapFavoriteToItem(FavoriteEntity favoriteEntity) {
   return Restaurant(
-    id: favoriteEntity.id,
-    city: favoriteEntity.city,
-    pictureId: favoriteEntity.image,
-    rating: double.parse(favoriteEntity.rating),
-    name: favoriteEntity.name,
-    description: favoriteEntity.description,
+    id: favoriteEntity.id ?? '',
+    city: favoriteEntity.city ?? '',
+    pictureId: favoriteEntity.image ?? '',
+    rating: double.parse(favoriteEntity.rating ?? ''),
+    name: favoriteEntity.name ?? '',
+    description: favoriteEntity.description ?? '',
+  );
+}
+
+Restaurant mapDetailToRestaurantItem(DetailRestaurant detailRestaurant) {
+  return Restaurant(
+    id: detailRestaurant.id,
+    city: detailRestaurant.city,
+    pictureId: detailRestaurant.pictureId,
+    rating: detailRestaurant.rating,
+    name: detailRestaurant.name,
+    description: detailRestaurant.description,
   );
 }

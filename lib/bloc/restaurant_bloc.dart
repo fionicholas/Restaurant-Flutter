@@ -114,7 +114,7 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
     try {
       await _restaurantRepository
           .addToFavorite(mapFavoriteEntity(event.restaurant));
-      yield AddToFavoriteSuccessState();
+      yield AddToFavoriteSuccessState(true);
     } catch (e) {
       yield AddToFavoriteErrorState(e.toString());
     }
@@ -125,7 +125,7 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
     yield DeleteFavoriteLoadingState();
     try {
       await _restaurantRepository.deleteFavorite(event.id);
-      yield DeleteFavoriteSuccessState();
+      yield DeleteFavoriteSuccessState(false);
     } catch (e) {
       yield DeleteFavoriteErrorState(e.toString());
     }
@@ -135,13 +135,10 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
       CheckFavoriteEvent event) async* {
     yield CheckFavoriteLoadingState();
     try {
-      FavoriteEntity favoriteEntity =
-          await _restaurantRepository.checkFavoriteById(event.id);
-      yield CheckFavoriteSuccessState(
-          favoriteEntity: favoriteEntity,
-          isFavorite: favoriteEntity.id != null ? true : false);
+      await _restaurantRepository.checkFavoriteById(event.id);
+      yield FavoredState(isFavorite: true);
     } catch (e) {
-      yield CheckFavoriteErrorState(e.toString());
+      yield UnfavorableState(e.toString(), false);
     }
   }
 

@@ -17,8 +17,10 @@ class AddToFavoriteErrorState extends RestaurantState {
 }
 
 class AddToFavoriteSuccessState extends RestaurantState {
-  AddToFavoriteSuccessState() : super();
+  final bool isFavorite;
+
+  AddToFavoriteSuccessState(this.isFavorite) : super();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isFavorite];
 }

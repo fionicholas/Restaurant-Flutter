@@ -7,24 +7,23 @@ class CheckFavoriteLoadingState extends RestaurantState {
   List<Object> get props => [];
 }
 
-class CheckFavoriteErrorState extends RestaurantState {
+class UnfavorableState extends RestaurantState {
   final String message;
-
-  CheckFavoriteErrorState(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class CheckFavoriteSuccessState extends RestaurantState {
-  final FavoriteEntity favoriteEntity;
   final bool isFavorite;
 
-  CheckFavoriteSuccessState({
-    required this.favoriteEntity,
+  UnfavorableState(this.message, this.isFavorite);
+
+  @override
+  List<Object> get props => [message, isFavorite];
+}
+
+class FavoredState extends RestaurantState {
+  final bool isFavorite;
+
+  FavoredState({
     required this.isFavorite,
   }) : super();
 
   @override
-  List<Object> get props => [favoriteEntity, isFavorite];
+  List<Object> get props => [isFavorite];
 }
