@@ -2,11 +2,11 @@ import 'package:restaurant_app/data/database/database_provider.dart';
 import 'package:restaurant_app/data/model/favorite_entity.dart';
 
 class FavoriteDao {
-  final dbProvider = DatabaseProvider.databaseProvider;
+  final dbProvider = DatabaseHelper();
 
   Future<int> addToFavorite(FavoriteEntity favoriteEntity) async {
     final db = await dbProvider.database;
-    var result = db.insert(favoriteTable, favoriteEntity.toDatabaseJson());
+    var result = db!.insert(favoriteTable, favoriteEntity.toDatabaseJson());
     return result;
   }
 
@@ -16,10 +16,10 @@ class FavoriteDao {
     late List<Map<String, dynamic>> result;
     if (query != null && query != '') {
       if (query.isNotEmpty)
-        result = await db.query(favoriteTable,
+        result = await db!.query(favoriteTable,
             where: 'name LIKE ?', whereArgs: ["%$query%"]);
     } else {
-      result = await db.query(favoriteTable, orderBy: 'id DESC');
+      result = await db!.query(favoriteTable, orderBy: 'id DESC');
     }
 
     List<FavoriteEntity> favorites = result.isNotEmpty
@@ -30,7 +30,7 @@ class FavoriteDao {
 
   Future<int> deleteFavorite(String id) async {
     final db = await dbProvider.database;
-    var result = db.delete(favoriteTable, where: 'id = ?', whereArgs: [id]);
+    var result = db!.delete(favoriteTable, where: 'id = ?', whereArgs: [id]);
 
     return result;
   }
@@ -38,7 +38,7 @@ class FavoriteDao {
   Future<FavoriteEntity> checkFavoriteById({required String id}) async {
     final db = await dbProvider.database;
     var result =
-        await db.query(favoriteTable, where: 'id = ?', whereArgs: [id]);
+        await db!.query(favoriteTable, where: 'id = ?', whereArgs: [id]);
 
     List<FavoriteEntity> favorite = result.isNotEmpty
         ? result.map((data) => FavoriteEntity.fromDatabaseJson(data)).toList()

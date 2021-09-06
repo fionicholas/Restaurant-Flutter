@@ -1,5 +1,5 @@
 class FavoriteEntity {
-  String id, name, description, image, city, rating;
+  String? id, name, description, image, city, rating;
 
   FavoriteEntity({
     required this.id,
