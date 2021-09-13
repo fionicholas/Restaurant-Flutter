@@ -56,6 +56,12 @@ dependencies:
 
   path: ^1.8.0
 
+  intl: ^0.17.0
+  android_alarm_manager: ^2.0.0
+  flutter_local_notifications: ^8.2.0
+  rxdart: ^0.26.0
+  shared_preferences: ^2.0.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
