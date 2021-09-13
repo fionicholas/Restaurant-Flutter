@@ -44,4 +44,13 @@ class RestaurantItem extends Equatable {
 
   factory RestaurantItem.fromJson(Map<String, dynamic> json) =>
       _$RestaurantItemFromJson(json);
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "description": description,
+    "pictureId": pictureId,
+    "city": city,
+    "rating": rating
+  };
 }

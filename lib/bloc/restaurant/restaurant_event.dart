@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:restaurant_app/bloc/model/restaurant.dart';
 import 'package:restaurant_app/data/model/request/customer_review_request.dart';
-import 'package:restaurant_app/data/model/response/restaurant_item.dart';
+
+import 'model/restaurant.dart';
 
 abstract class RestaurantEvent extends Equatable {
   const RestaurantEvent();

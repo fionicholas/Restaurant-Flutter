@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:restaurant_app/bloc/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/restaurant.dart';
 import 'package:restaurant_app/data/model/request/customer_review_request.dart';
 import 'package:restaurant_app/ui/shared/custom_button.dart';
 import 'package:restaurant_app/utils/colors.dart';

@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
-import 'package:restaurant_app/bloc/model/restaurant.dart';
-import 'package:restaurant_app/bloc/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/restaurant.dart';
 import 'package:restaurant_app/data/model/favorite_entity.dart';
 import 'package:restaurant_app/data/restaurant_repository.dart';
 import 'package:restaurant_app/utils/error_handler.dart';
 
 import 'mapper/restaurant_mapper.dart';
+import 'model/detail_restaurant.dart';
+import 'model/restaurant.dart';
 
 class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
   final RestaurantRepository _restaurantRepository;
@@ -148,8 +148,12 @@ class RestaurantBloc extends Bloc<RestaurantEvent, RestaurantState> {
     try {
       List<FavoriteEntity> favorites =
           await _restaurantRepository.getFavorites();
-      yield FetchFavoritesSuccessState(
-          favorites.map((e) => mapFavoriteToItem(e)).toList());
+      if (favorites.isEmpty) {
+        yield FetchFavoritesEmptyState("Favorites Not Found");
+      } else {
+        yield FetchFavoritesSuccessState(
+            favorites.map((e) => mapFavoriteToItem(e)).toList());
+      }
     } catch (e) {
       yield FetchFavoritesErrorState(e.toString());
     }

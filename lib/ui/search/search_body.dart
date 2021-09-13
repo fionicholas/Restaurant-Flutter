@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/bloc/model/restaurant.dart';
-import 'package:restaurant_app/bloc/restaurant_bloc.dart';
-import 'package:restaurant_app/bloc/restaurant_event.dart';
-import 'package:restaurant_app/bloc/restaurant_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:restaurant_app/bloc/restaurant/model/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/restaurant.dart';
 import 'package:restaurant_app/ui/shared/container_restaurants.dart';
 import 'package:restaurant_app/utils/colors.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchBody extends StatefulWidget {
   const SearchBody({Key? key}) : super(key: key);

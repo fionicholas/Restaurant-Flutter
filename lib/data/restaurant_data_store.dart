@@ -7,6 +7,8 @@ import 'package:restaurant_app/data/model/response/restaurant_item.dart';
 import 'package:restaurant_app/data/remote/restaurant_api.dart';
 import 'package:restaurant_app/data/restaurant_repository.dart';
 
+import 'model/response/restaurant_response.dart';
+
 class RestaurantDataSource extends RestaurantRepository {
   final RestaurantApi _restaurantApi;
   final FavoriteDao _favoriteDao;
@@ -61,5 +63,10 @@ class RestaurantDataSource extends RestaurantRepository {
   @override
   Future getFavorites() {
     return _favoriteDao.getFavorites();
+  }
+
+  @override
+  Future<RestaurantResponse> getRestaurantsNotification() {
+    return _restaurantApi.getRestaurantData().then((value) => value);
   }
 }

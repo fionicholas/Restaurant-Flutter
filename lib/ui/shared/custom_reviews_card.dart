@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:restaurant_app/bloc/model/customer_reviews.dart';
+import 'package:restaurant_app/bloc/restaurant/model/customer_reviews.dart';
 import 'package:restaurant_app/utils/assets.dart';
 import 'package:restaurant_app/utils/colors.dart';
 

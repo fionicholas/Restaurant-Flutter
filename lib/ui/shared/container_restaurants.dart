@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/bloc/model/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/model/restaurant.dart';
 import 'package:restaurant_app/ui/detail/detail_restaurant_page.dart';
 import 'package:restaurant_app/utils/assets.dart';
 import 'package:restaurant_app/utils/colors.dart';

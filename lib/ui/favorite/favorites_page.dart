@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:restaurant_app/bloc/model/restaurant.dart';
-import 'package:restaurant_app/bloc/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/model/restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/restaurant.dart';
 import 'package:restaurant_app/ui/shared/container_restaurants.dart';
 
 class FavoritesPage extends StatelessWidget {
@@ -14,10 +14,10 @@ class FavoritesPage extends StatelessWidget {
       buildWhen: (previousState, state) {
         return state is FetchFavoritesSuccessState ||
             state is FetchFavoritesLoadingState ||
+            state is FetchFavoritesEmptyState ||
             state is FetchFavoritesErrorState;
       },
       builder: (context, state) {
-        print("DASDAD $state");
         if (state is FetchFavoritesSuccessState) {
           List<Restaurant> restaurants = state.restaurants;
           return _buildHomePage(restaurants: restaurants);
@@ -26,6 +26,23 @@ class FavoritesPage extends StatelessWidget {
             padding: EdgeInsets.only(top: 100),
             child: Center(
               child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (state is FetchFavoritesEmptyState) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.error,
+                  color: Colors.red[700],
+                  size: 40,
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(state.emptyMessage)
+              ],
             ),
           );
         } else if (state is FetchFavoritesErrorState) {

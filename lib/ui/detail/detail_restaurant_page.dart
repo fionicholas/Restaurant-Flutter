@@ -2,10 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:restaurant_app/bloc/mapper/restaurant_mapper.dart';
-import 'package:restaurant_app/bloc/model/detail_restaurant.dart';
-import 'package:restaurant_app/bloc/restaurant.dart';
-import 'package:restaurant_app/bloc/restaurant_bloc.dart';
+import 'package:restaurant_app/bloc/restaurant/mapper/restaurant_mapper.dart';
+import 'package:restaurant_app/bloc/restaurant/model/detail_restaurant.dart';
+import 'package:restaurant_app/bloc/restaurant/restaurant.dart';
 import 'package:restaurant_app/ui/detail/components/container_customer_reviews.dart';
 import 'package:restaurant_app/ui/detail/components/container_drinks.dart';
 import 'package:restaurant_app/ui/detail/components/container_foods.dart';
@@ -431,7 +430,8 @@ class _DetailRestaurantPageState extends State<DetailRestaurantPage> {
   }
 
   _checkFavoriteById() {
-    BlocProvider.of<RestaurantBloc>(context).add(CheckFavoriteEvent(id: widget.id));
+    BlocProvider.of<RestaurantBloc>(context)
+        .add(CheckFavoriteEvent(id: widget.id));
   }
 
   _fetchFavorites() {
