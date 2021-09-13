@@ -1,8 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurant_app/ui/detail/detail_restaurant_page.dart';
 import 'package:restaurant_app/ui/favorite/favorites_page.dart';
 import 'package:restaurant_app/ui/search/search_page.dart';
+import 'package:restaurant_app/ui/settings/settings_page.dart';
 import 'package:restaurant_app/utils/colors.dart';
+import 'package:restaurant_app/utils/notification_helper.dart';
 
 import 'home_page.dart';
 
@@ -17,6 +20,9 @@ class MainApp extends StatefulWidget {
 
 class _MainAppState extends State<MainApp> {
   final FavoritesPage _favorite = FavoritesPage();
+  final SettingsPage _settings = SettingsPage();
+
+  final NotificationHelper _notificationHelper = NotificationHelper();
 
   Widget _showPages = HomePage();
 
@@ -26,6 +32,8 @@ class _MainAppState extends State<MainApp> {
         return HomePage();
       case 1:
         return _favorite;
+      case 2:
+        return _settings;
       default:
         return new Container(
           child: Text(
@@ -34,6 +42,13 @@ class _MainAppState extends State<MainApp> {
           ),
         );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationHelper
+        .configureSelectNotificationSubject(DetailRestaurantPage.routeName);
   }
 
   @override
@@ -86,6 +101,11 @@ class _MainAppState extends State<MainApp> {
             ),
             Icon(
               Icons.favorite,
+              size: 30,
+              color: Colors.white,
+            ),
+            Icon(
+              Icons.settings,
               size: 30,
               color: Colors.white,
             ),

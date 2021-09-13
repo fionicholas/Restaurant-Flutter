@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:restaurant_app/data/local/favorite_dao.dart';
 import 'package:restaurant_app/di/restaurant_module.dart';
+import 'package:restaurant_app/utils/preference_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 GetIt locator = GetIt.instance;
 
@@ -16,5 +18,9 @@ void injectModules() async {
 
   locator.registerSingleton(_dio);
   locator.registerSingleton(_favoriteDao);
+
+  locator.registerSingleton(
+      PreferencesHelper(sharedPreferences: SharedPreferences.getInstance()));
+
   injectRestaurantModuleModule();
 }
