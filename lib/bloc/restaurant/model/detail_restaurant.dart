@@ -1,4 +1,5 @@
-import 'package:restaurant_app/bloc/model/shared_name.dart';
+
+import 'package:restaurant_app/bloc/restaurant/model/shared_name.dart';
 
 import 'customer_reviews.dart';
 import 'menu.dart';

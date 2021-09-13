@@ -24,3 +24,12 @@ class FetchFavoritesSuccessState extends RestaurantState {
   @override
   List<Object> get props => [];
 }
+
+class FetchFavoritesEmptyState extends RestaurantState {
+  final String emptyMessage;
+
+  FetchFavoritesEmptyState(this.emptyMessage) : super();
+
+  @override
+  List<Object> get props => [];
+}
