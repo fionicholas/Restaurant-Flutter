@@ -24,7 +24,7 @@ Restaurants App with Flutter
 
 ## Screenshots
 <pre>
-<img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-home.png" alt="ss-restaurants-home" width="330" height="500" /><img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-search.png" alt="ss-restaurants-search" width="330" height="500" /><img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-expand.png" alt="ss-restaurants-expand" width="330" height="500" /><img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-collapse.png" alt="ss-restaurants-collapse" width="330" height="500" />
+<img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-home.png" alt="ss-restaurants-home" width="260" height="500" /><img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-expand.png" alt="ss-restaurants-expand" width="260" height="500" /><img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-search.png" alt="ss-restaurants-search" width="260" height="500" /> <img src="https://github.com/fionicholas/Restaurants-Flutterapp/blob/master/screenshot/ss-restaurants-collapse.png" alt="ss-restaurants-collapse" width="260" height="500" />
 </pre>
 
 ## Don't Forget to
